@@ -1,0 +1,4 @@
+config BR2_PACKAGE_LDD
+        bool "ldd"
+        help
+          Includes the misc-modules and scull components
