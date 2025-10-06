@@ -9,7 +9,7 @@ case "$1" in
         echo "Stopping aesdsocket"
         /usr/bin/aesdsocket-start-stop stop
         ;;
-    restart[reload]
+    restart|reload)  # Fixed: added pipe character and closing parenthesis
         "$0" stop
         "$0" start
         ;;
@@ -17,5 +17,3 @@ case "$1" in
         echo "Usage: $0 {start|stop|restart}"
         exit 1
 esac
-
-exit 0
