@@ -4,13 +4,15 @@
 #
 ##############################################################
 
-AESDCHAR_VERSION = c3640338d1930b4e56116371fdd2ec331db4f594
+AESDCHAR_VERSION = 00aaba7d0370604a1f37e77e071d43e7dcead2c6
 AESDCHAR_SITE = git@github.com:cu-ecen-aeld/assignments-3-and-later-Holmberg18.git
 AESDCHAR_SITE_METHOD = git
 
 AESDCHAR_MODULE_SUBDIRS = aesd-char-driver
 
 define AESDCHAR_BUILD_CMDS
+    # Copy the ioctl header to server directory for compilation
+    cp $(@D)/aesd-char-driver/aesd_ioctl.h $(@D)/server/
     # Build aesdsocket
     $(TARGET_CC) $(TARGET_CFLAGS) -DUSE_AESD_CHAR_DEVICE=1 -o $(@D)/server/aesdsocket $(@D)/server/aesdsocket.c -lpthread
 endef
