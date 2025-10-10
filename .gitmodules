@@ -3,5 +3,5 @@
 	url = https://github.com/cu-ecen-5013/assignment-autotest
 [submodule "buildroot"]
 	path = buildroot
-	url = https://gitlab.com/buildroot.org/buildroot.git
-	branch = 2024.02.x
+	url = https://github.com/cu-ecen-aeld/buildroot-assignments-base.git
+	branch = assignment9
