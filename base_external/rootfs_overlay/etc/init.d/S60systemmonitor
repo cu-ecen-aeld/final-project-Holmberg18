@@ -1,0 +1,35 @@
+#!/bin/sh
+
+DAEMON=/usr/bin/system_monitor
+NAME=system_monitor
+DESC="System Monitor Daemon"
+
+case "$1" in
+    start)
+        echo "Starting $DESC..."
+        if [ -x $DAEMON ]; then
+            # Start as background process
+            $DAEMON &
+            echo "$DESC started."
+        else
+            echo "ERROR: $DAEMON not found or not executable"
+            exit 1
+        fi
+        ;;
+    stop)
+        echo "Stopping $DESC..."
+        pkill -f "$DAEMON"
+        echo "$DESC stopped."
+        ;;
+    restart)
+        $0 stop
+        sleep 1
+        $0 start
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+        ;;
+esac
+
+exit 0

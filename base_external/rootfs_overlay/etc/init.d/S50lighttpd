@@ -16,7 +16,7 @@ case "$1" in
           adduser -D -H -s /bin/false -G www -u 80 www
       fi
       
-      # Create necessary directories with proper permissions
+
       mkdir -p /var/log/lighttpd
       chown www:www /var/log/lighttpd
       chmod 755 /var/log/lighttpd
