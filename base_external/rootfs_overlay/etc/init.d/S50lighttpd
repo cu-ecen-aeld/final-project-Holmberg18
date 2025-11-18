@@ -1,0 +1,45 @@
+#!/bin/sh
+
+DAEMON=lighttpd
+DAEMON_OPTS="-f /etc/lighttpd/lighttpd.conf"
+
+case "$1" in
+    start)
+      # Create www group and user for lighttpd
+      if ! grep -q "^www:" /etc/group; then
+          echo "Creating www group for lighttpd..."
+          addgroup -g 80 www
+      fi
+      
+      if ! grep -q "^www:" /etc/passwd; then
+          echo "Creating www user for lighttpd..."
+          adduser -D -H -s /bin/false -G www -u 80 www
+      fi
+      
+      # Create necessary directories with proper permissions
+      mkdir -p /var/log/lighttpd
+      chown www:www /var/log/lighttpd
+      chmod 755 /var/log/lighttpd
+      
+      mkdir -p /var/run/lighttpd
+      chown www:www /var/run/lighttpd
+      chmod 755 /var/run/lighttpd
+      
+      echo "Starting $DAEMON..."
+      start-stop-daemon -S -q -x $DAEMON -- $DAEMON_OPTS
+      ;;
+    stop)
+      echo "Stopping $DAEMON..."
+      start-stop-daemon -K -q -x $DAEMON
+      ;;
+    restart)
+      $0 stop
+      sleep 1
+      $0 start
+      ;;
+    *)
+      echo "Usage: $0 {start|stop|restart}"
+      exit 1
+esac
+
+exit 0
