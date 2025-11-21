@@ -7,8 +7,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <syslog.h>
 
 #define TEMP_FILE "/sys/class/thermal/thermal_zone0/temp"
+#define JSON_PATH "/tmp/system_stats.json"
 #define LOG_INTERVAL 2  // in seconds
 #define RUNNING 1
 
@@ -40,6 +42,22 @@ void get_timestamp(char *buffer, size_t size) {
     strftime(buffer, size, "%Y-%m-%d %H:%M:%S", tm_info);
 }
 
+void write_json_data(float temperature) {
+    char timestamp[20];
+    get_timestamp(timestamp, sizeof(timestamp));
+
+    FILE *json_file = fopen(JSON_PATH, "w");
+    if(json_file == NULL) {
+        perror("Failed to open JSON file");
+        return;
+    }
+
+    fprintf(json_file, "{\"temperature\": %.1f, \"timestamp\": \"%s\", \"unit\": \"celsius\"}\n", temperature, timestamp);
+    fclose(json_file);
+
+    chmod(JSON_PATH, 0644);
+}
+
 int main() {
     printf("System Monitor Daemon starting...\n");
     
@@ -62,17 +80,18 @@ int main() {
     umask(0);
     setsid();
     chdir("/");
+
     
+    // Create monitor log
+    FILE *log_stream = fopen("/var/log/system_monitor.log", "a");
+    if (log_stream == NULL) {
+        exit(1);
+    }
+
     // Close file descriptors
     close(STDIN_FILENO);
     close(STDOUT_FILENO);
     close(STDERR_FILENO);
-    
-    // Reopen stdout to /dev/tty1 for logging
-    FILE *log_stream = fopen("/dev/tty1", "w");
-    if (log_stream == NULL) {
-        log_stream = fopen("/dev/null", "w");
-    }
     
     fprintf(log_stream, "System Monitor Daemon started (PID: %d)\n", getpid());
     fflush(log_stream);
@@ -83,7 +102,9 @@ int main() {
         get_timestamp(timestamp, sizeof(timestamp));
         
         if (temp >= 0) {
-            fprintf(log_stream, "[%s] CPU Temperature: %.1f°C\n", timestamp, temp);
+            write_json_data(temp);
+            // Log temperature
+            fprintf(log_stream, "[%s] CPU Temperature: %.1f°C -JSON updated\n", timestamp, temp);
             fflush(log_stream);
         } else {
             fprintf(log_stream, "[%s] ERROR: Could not read temperature from %s\n", 

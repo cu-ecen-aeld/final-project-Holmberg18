@@ -6,8 +6,7 @@ set -e
 cd "$(dirname "$0")"
 chmod +x base_external/rootfs_overlay/etc/init.d/S50lighttpd
 chmod +x base_external/rootfs_overlay/etc/init.d/S60systemmonitor
-chmod +x base_external/rootfs_overlay/build_monitor.sh
-
+chmod +x base_external/rootfs_overlay/usr/bin/system_monitor
 echo "=== Building for Raspberry Pi 4 Hardware ==="
 
 # Clean previous config and build
