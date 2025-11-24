@@ -1,11 +1,35 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>RPi4 System Monitor</title>
+        <link rel="stylesheet" href="styles.css">
     </head>
     <body>
-        <h1>RPi4 System Health Monitor</h1>
-        <p>Buildroot + lighttpd is working!</p>
-        <p>System booted successfully.</p>
+        <div class="container">
+            <h1>RPi4 System Monitor</h1>
+            <div class="subtitle">Real-time CPU Temperature</div>
+
+            <div class="error-message" id="errorMessage">
+                Unable to fetch temperature data. Please make sure the system monitor is running.
+            </div>
+
+            <div class="temperature-display temp-unknown" id="temperatureDisplay">
+                --.-°C
+            </div>
+
+            <div class="status-info">
+                <div class="temperature-label">Current CPU Temperature</div>
+                <div class="last-update" id="lastUpdate">
+                    Last update: Never
+                </div>
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>Live update every 2 seconds</span>
+                </div>
+            </div>
+        </div>
+    <script src="script.js"></script>
     </body>
 </html>

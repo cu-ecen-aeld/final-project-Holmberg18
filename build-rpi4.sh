@@ -7,6 +7,11 @@ cd "$(dirname "$0")"
 chmod +x base_external/rootfs_overlay/etc/init.d/S50lighttpd
 chmod +x base_external/rootfs_overlay/etc/init.d/S60systemmonitor
 chmod +x base_external/rootfs_overlay/usr/bin/system_monitor
+chmod 644 base_external/rootfs_overlay/var/www/index.html
+chmod 644 base_external/rootfs_overlay/var/www/styles.css
+chmod 644 base_external/rootfs_overlay/var/www/script.js
+chmod 644 base_external/rootfs_overlay/etc/network/interfaces
+chmod 600 base_external/rootfs_overlay/etc/wpa_supplicant.conf
 echo "=== Building for Raspberry Pi 4 Hardware ==="
 
 # Clean previous config and build

@@ -8,9 +8,10 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <syslog.h>
+#include <errno.h>
 
 #define TEMP_FILE "/sys/class/thermal/thermal_zone0/temp"
-#define JSON_PATH "/tmp/system_stats.json"
+#define JSON_PATH "/var/www/system_stats.json"
 #define LOG_INTERVAL 2  // in seconds
 #define RUNNING 1
 
@@ -48,7 +49,11 @@ void write_json_data(float temperature) {
 
     FILE *json_file = fopen(JSON_PATH, "w");
     if(json_file == NULL) {
-        perror("Failed to open JSON file");
+        FILE *log = fopen("/var/log/system_monitor.log", "a");
+        if(log){
+            fprintf(log, "[%s] Error: Failed to open %s - errno: %d\n", timestamp, JSON_PATH, errno);
+            fclose(log);
+        }
         return;
     }
 
@@ -81,11 +86,18 @@ int main() {
     setsid();
     chdir("/");
 
-    
+    // Ensure /var/www is writable by daemon
+    int ret = system("chown -R root:root /var/www/ 2>/dev/null");
+
     // Create monitor log
     FILE *log_stream = fopen("/var/log/system_monitor.log", "a");
     if (log_stream == NULL) {
         exit(1);
+    }
+    if(ret != 0){
+        if(log_stream){
+            fprintf(log_stream, "Warning: chown returned %d\n", ret);
+        }
     }
 
     // Close file descriptors
@@ -104,7 +116,7 @@ int main() {
         if (temp >= 0) {
             write_json_data(temp);
             // Log temperature
-            fprintf(log_stream, "[%s] CPU Temperature: %.1f°C -JSON updated\n", timestamp, temp);
+            fprintf(log_stream, "[%s] CPU Temperature: %.1f°C - JSON updated\n", timestamp, temp);
             fflush(log_stream);
         } else {
             fprintf(log_stream, "[%s] ERROR: Could not read temperature from %s\n", 
