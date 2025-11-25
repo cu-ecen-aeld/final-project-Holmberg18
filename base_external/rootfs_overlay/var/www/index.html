@@ -12,11 +12,21 @@
             <div class="subtitle">Real-time CPU Temperature</div>
 
             <div class="error-message" id="errorMessage">
-                Unable to fetch temperature data. Please make sure the system monitor is running.
+                Unable to fetch system data. Please make sure the system monitor is running.
             </div>
 
             <div class="temperature-display temp-unknown" id="temperatureDisplay">
                 --.-°C
+            </div>
+            <div class="virtual-fan">
+                <div class="subtitle">Virtual Fan Control</div>
+                <div class="fan-status">
+                    <span id="fan-speed-text">Fan Speed: 0%</span>
+                    <div class="speed-bar">
+                        <div id="fan-visual" class="speed-fill" style="width: 0%"></div>
+                    </div>
+                    <div id="fan-state">Status: Retrieving Fan Speed Data...</div>
+                </div>
             </div>
 
             <div class="status-info">
