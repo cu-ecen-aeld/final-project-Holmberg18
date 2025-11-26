@@ -44,7 +44,48 @@ function updateFanSpeedDisplay(data){
     fanStateElement.textContent = statusText;
 }
 
+function updateResourceDisplay(data){
+    // CPU usage readings
+    const cpuUsage = data.cpu_usage !== undefined ? data.cpu_usage : -1;
+    if(cpuUsage >= 0){
+        document.getElementById('cpu-usage').textContent = cpuUsage.toFixed(1);
+        document.getElementById('cpu-bar').style.width = `${cpuUsage}%`;
+    } else {
+        document.getElementById('cpu-usage').textContent = 'N/A';
+        document.getElementById('cpu-bar').style.width = '0%';
+    }
+
+    // Memory usage readings
+    const memUsage = data.memory_usage !== undefined ? data.memory_usage : -1;
+    if(memUsage >= 0){
+        const memUsedMB = (data.memory_used / 1024).toFixed(1);
+        const memTotalMB = (data.memory_total / 1024).toFixed(1);
+
+        document.getElementById('memory-usage').textContent = memUsage.toFixed(1);
+        document.getElementById('memory-bar').style.width = `${memUsage}%`;
+        document.getElementById('memory-detail').textContent =
+            `${memUsedMB} MB / ${memTotalMB} MB`;
+    } else {
+        document.getElementById('memory-usage').textContent = 'N/A';
+        document.getElementById('memory-bar').style.width = '0%';
+        document.getElementById('memory-detail').textContent = 'Memory data unavailable';
+    }
+
+    // Load averages
+    if(data.load_1min !== undefined){
+        document.getElementById('load-1min').textContent = data.load_1min.toFixed(2);
+        document.getElementById('load-5min').textContent = data.load_5min.toFixed(2);
+        document.getElementById('load-15min').textContent = data.load_15min.toFixed(2);
+    } else {
+        document.getElementById('load-1min').textContent = "--";
+        document.getElementById('load-5min').textContent = '--';
+        document.getElementById('load-15min').textContent = '--';
+    }
+}
+
 function updateDisplay() {
+
+    document.getElementById('lastUpdate').textContent = 'Updating...';
     fetch("system_stats.json")
         .then(response => {
             if(!response.ok){
@@ -59,18 +100,19 @@ function updateDisplay() {
 
             updateTempDisplay(data);
             updateFanSpeedDisplay(data);
+            updateResourceDisplay(data);
 
 
             // Update the timestamp
             document.getElementById('lastUpdate').textContent =
-                `Last updated: ${data.timestamp}`;
+                `Last updated: ${data.timestamp || new Date().toLocaleString()}`;
         })
         .catch(error => {
             console.error('Error fetching temperature:', error);
             errorCount++;
 
             if(errorCount >= maxErrors){
-                document.getElementById(`errorMessage`).style.display = 'block';
+                document.getElementById('errorMessage').style.display = 'block';
             }
         });
 }

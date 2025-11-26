@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌡️</text></svg>">
         <title>RPi4 System Monitor</title>
         <link rel="stylesheet" href="styles.css">
     </head>
@@ -28,9 +29,35 @@
                     <div id="fan-state">Status: Retrieving Fan Speed Data...</div>
                 </div>
             </div>
+            <div class="system-resources">
+                <div class="subtitle">System Resources</div>
 
+                <div class="resource-item">
+                    <div class="resource-label">CPU Usage: <span id="cpu-usage">--</span>%</div>
+                    <div class="progress-bar">
+                        <div id="cpu-bar" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="resource-item">
+                    <div class="resource-label">Memory Usage: <span id="memory-usage">--</span>%</div>
+                    <div class="progress-bar">
+                        <div id="memory-bar" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="resource-detail" id="memory-detail">-- MB / -- MB</div>
+                </div>
+
+                <div class="resource-item">
+                    <div class="resource-label">Load Averages</div>
+                    <div class="load-averages">
+                        <span>1min: <span id="load-1min">--</span></span>
+                        <span>5min: <span id="load-5min">--</span></span>
+                        <span>15min: <span id="load-15min">--</span></span>
+                    </div>
+                </div>
+            </div>
             <div class="status-info">
-                <div class="temperature-label">Current CPU Temperature</div>
+                <div class="temperature-label">Current System Status</div>
                 <div class="last-update" id="lastUpdate">
                     Last update: Never
                 </div>
